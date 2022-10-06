@@ -17,6 +17,7 @@ import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
+
 public class AppConfig {
 
     @Bean
@@ -27,7 +28,6 @@ public class AppConfig {
         JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         entityManager.setJpaVendorAdapter(vendorAdapter);
         entityManager.setJpaProperties(additionalProperties());
-
         return entityManager;
     }
 
