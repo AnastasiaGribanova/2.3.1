@@ -1,20 +1,31 @@
 package web.dao;
 
-import com.google.inject.Inject;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import org.springframework.stereotype.Repository;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import web.model.User;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import java.util.List;
 
-@Repository
-public class UserDaoImp implements  UserDao{
-
+@Component
+public class UserDaoImp implements UserDao {
 
     @PersistenceContext
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
 
+    @Autowired
+    public UserDaoImp(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+
+    @Override
+    public List<User> getAllUsers() {
+        return entityManager.createQuery("select u from User u", User.class).getResultList();
+//        return entityManager.createNativeQuery("select * from users", User.class).getResultList();
+    }
 
     @Override
     public void save(User user) {
@@ -22,19 +33,36 @@ public class UserDaoImp implements  UserDao{
     }
 
     @Override
-
-    public List<User> listAll() {
-        List<User> allUsers = entityManager.createQuery("from User", User.class).getResultList();
-        return allUsers;
+    public User show(int id) {
+        TypedQuery<User> query = entityManager.createQuery(
+                "select u from User u where u.id = :id", User.class);
+        query.setParameter("id", id);
+        return query.getSingleResult();
     }
 
     @Override
-    public User get(Long id) {
-        return null;
+    public void update(int id, User updateUser) {
+        User user = show(id);
+        user.setEmail(updateUser.getEmail());
+        user.setName(updateUser.getName());
+        user.setLast_name(updateUser.getLast_name());
+        entityManager.merge(user);
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(int id) {
+        User user = show(id);
+        entityManager.remove(user);
+    }
 
+    @Override
+    public User isExistById(User user) {
+        if(entityManager.contains(user)) {
+            entityManager.remove(user);
+        } else {
+            entityManager.remove(entityManager.merge(user));
+        }
+        return user;
     }
 }
+

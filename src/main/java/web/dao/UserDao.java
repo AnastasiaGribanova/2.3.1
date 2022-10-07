@@ -1,17 +1,14 @@
 package web.dao;
-
-import org.springframework.stereotype.Component;
 import web.model.User;
-
 import java.util.List;
 
-@Component
-
 public interface UserDao {
+
+    List<User> getAllUsers();
     void save(User user);
-
-    public List<User> listAll();
-    public User get(Long id);
-
-    public void delete(Long id);
+    User show(int id);
+    void update(int id, User updateUser);
+    void delete(int id);
+    User isExistById(User user);
 }
+

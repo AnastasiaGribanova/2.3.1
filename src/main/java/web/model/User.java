@@ -1,27 +1,26 @@
 package web.model;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
+import java.util.Objects;
 
-@Entity (name = "User")
-@Table (name = "user")
+@Entity
+@Table(name = "users")
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column
-    private String name;
-    @Column
-    private String lastName;
-    @Column
     private String email;
+    private String name;
+    private String last_name;
 
-    public User () {}
+    public User() {
+    }
 
-    public User(int id, String name, String lastName, String email) {
-        this.id = id;
-        this.name = name;
-        this.lastName = lastName;
+    public User(String email, String name, String last_name) {
         this.email = email;
+        this.name = name;
+        this.last_name = last_name;
     }
 
     public int getId() {
@@ -32,6 +31,10 @@ public class User {
         this.id = id;
     }
 
+    public String getEmail() { return email; }
+
+    public void setEmail(String email) { this.email = email; }
+
     public String getName() {
         return name;
     }
@@ -40,21 +43,25 @@ public class User {
         this.name = name;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getLast_name() {
+        return last_name;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setLast_name(String last_name) {
+        this.last_name = last_name;
     }
 
-    public String getEmail() {
-        return email;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id == user.id && Objects.equals(email, user.email) && Objects.equals(name, user.name) && Objects.equals(last_name, user.last_name);
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, email, name, last_name);
     }
-
-
 }
+
