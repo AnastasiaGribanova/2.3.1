@@ -4,10 +4,12 @@ import java.util.List;
 
 public interface UserService {
 
-    List<User> getAllUsers();
-    void save(User user);
-    User show(int id);
-    void update(int id, User updateUser);
+
+
+    List<User> listAll();
     void delete(int id);
-    User isExistById(User user);
+    void save(User user);
+    void update(int id, User updatedUser);
+    User show(int id);
+
 }

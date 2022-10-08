@@ -11,6 +11,7 @@ import javax.persistence.TypedQuery;
 import java.util.List;
 
 @Component
+
 public class UserDaoImp implements UserDao {
 
     @PersistenceContext
@@ -21,10 +22,14 @@ public class UserDaoImp implements UserDao {
         this.entityManager = entityManager;
     }
 
-    @Override
-    public List<User> getAllUsers() {
-        return entityManager.createQuery("select u from User u", User.class).getResultList();
-//        return entityManager.createNativeQuery("select * from users", User.class).getResultList();
+    public List<User> listAll() {
+        String jpql = "SELECT c FROM User c";
+        TypedQuery<User> query = entityManager.createQuery(jpql, User.class);
+        return query.getResultList();
+    }
+    public void delete(int id) {
+        User user = entityManager.find(User.class, id);
+        entityManager.remove(user);
     }
 
     @Override
@@ -33,36 +38,19 @@ public class UserDaoImp implements UserDao {
     }
 
     @Override
+    public void update(int id, User updatedUser) {
+        User userToBeUpdated = show(id);
+        userToBeUpdated.setName(updatedUser.getName());
+        userToBeUpdated.setLast_name(updatedUser.getLast_name());
+        userToBeUpdated.setEmail(updatedUser.getEmail());
+    }
+
+    @Override
     public User show(int id) {
         TypedQuery<User> query = entityManager.createQuery(
                 "select u from User u where u.id = :id", User.class);
         query.setParameter("id", id);
         return query.getSingleResult();
-    }
-
-    @Override
-    public void update(int id, User updateUser) {
-        User user = show(id);
-        user.setEmail(updateUser.getEmail());
-        user.setName(updateUser.getName());
-        user.setLast_name(updateUser.getLast_name());
-        entityManager.merge(user);
-    }
-
-    @Override
-    public void delete(int id) {
-        User user = show(id);
-        entityManager.remove(user);
-    }
-
-    @Override
-    public User isExistById(User user) {
-        if(entityManager.contains(user)) {
-            entityManager.remove(user);
-        } else {
-            entityManager.remove(entityManager.merge(user));
-        }
-        return user;
     }
 }
 
